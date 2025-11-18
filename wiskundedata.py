@@ -1,3 +1,4 @@
+functions = {'max', 'min', 'sin', 'cos', 'sqrt'}
 operators = {'+', '-', '*', '/', '^'}
-
-aliases = {'**':'^'}
+special = {',', '(', ')'}
+aliases = {'**':'^', ';':',', '[':'(', ']':')', 'V':'sqrt'}
