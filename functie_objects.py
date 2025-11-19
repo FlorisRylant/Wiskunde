@@ -1,3 +1,5 @@
+from wiskundedata import functions
+
 class Functie:
     def __init__(self, operator, *argumenten):
         self.__op = operator
@@ -11,6 +13,35 @@ class Functie:
     def get_onbekendes(self): # geeft een set met alle onbekendes in de functie
         return self.__onbekendes
     
+    def __call__(self, *vars): # vars is een dictionary met alle onbekendes, kan ook omzetten naar de dict
+        if len(vars) == 1 and type(vars[0]) == dict:
+            args = tuple([arg(vars[0]) for arg in self.__args]) # de argumenten, allemaal voor de gegeven waardes
+            if self.__op == '+':
+                return args[0] + args[1]
+            if self.__op == '*':
+                return args[0] * args[1]
+            if self.__op == '^':
+                return args[0] ** args[1]
+
+            if self.__op in functions:
+                return functions[self.__op]['f'](args)
+            
+        elif type(vars) == tuple or type(vars) == list:
+            if len(vars) == len(self.__onbekendes):
+                variabelen = {}
+                for i, key in enumerate(sorted(self.__onbekendes)):
+                    variabelen[key] = vars[i]
+                return self(variabelen)
+            raise KeyError(f"{len(self.__onbekendes)} onbekendes, {len(vars)} gegevens")
+        elif type(vars) != dict:
+            if len(self.__onbekendes) == 1:
+                try:
+                    return self(float(vars))
+                except:
+                    raise ValueError(f"{vars} past niet in de functie")
+            raise ValueError(f"Meer dan 1 variabele gevraagd, 1 gegeven")
+
+
     def __str__(self):
         if self.__op in '+*^':
             return f"({self.__args[0]}{self.__op}{self.__args[1]})"
@@ -26,7 +57,8 @@ class Functie:
         for arg in self.__args:
             out += str(arg)
             out += '\n- '
-        return out[:-4]
+        out = out[:-2] + "Variabelen: " + ', '.join(self.__onbekendes)
+        return out
     
 
 class Constante(Functie):
@@ -35,7 +67,7 @@ class Constante(Functie):
         if self.__val%1 < 0.00005:
             self.__val = int(waarde)
 
-    def __call__(self, x):
+    def __call__(self, vars):
         return self.__val
     
     def __str__(self):
@@ -52,8 +84,12 @@ class Onbekende(Functie):
     def __init__(self, naam):
         self.__naam = naam # moet een string zijn
     
-    def __call__(self, x):
-        return x
+    def __call__(self, vars):
+        if self.__naam in vars:
+            if isinstance(vars[self.__naam], str):
+                return float(vars[self.__naam])
+            return vars[self.__naam]
+        raise KeyError(f"Variabele {self.__naam} niet gegeven")
     
     def __str__(self):
         return self.__naam
@@ -78,9 +114,11 @@ def main():
     a = Constante(2)
     b = Constante(-4)
     x = Onbekende('x')
-    f = Functie('min', Functie('+', a, Functie('*', b, x)), a, b)
+    y = Onbekende('y')
+    f = Functie('min', Functie('+', a, Functie('*', b, x)), y, a)
     print(f)
-    print(f.get_onbekendes())
+    print(f(0, 1))
+    print(f({'y':10, 'x':5}))
 
 if __name__ == '__main__':
     main()
