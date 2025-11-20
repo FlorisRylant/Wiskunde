@@ -1,6 +1,6 @@
 from data import functions, operators, special
 
-def skip_haakjes(lijst, startpos):
+def skip_haakjes(lijst, startpos): # springt over het haakjesblok waar hij zit, anders blijft hij gewoon
     if lijst[startpos] == ')':
         increment = -1
         i = startpos
@@ -13,6 +13,11 @@ def skip_haakjes(lijst, startpos):
     if increment == 1:
         i -= 1
     return i
+
+def verwerk_afwerking(lijst, positie, invoegen, pos2): # regelt heel het ergerlijke blok om alles aan te passen in één keer
+    for i in reversed(invoegen):
+        lijst.insert(positie, i)
+    return False, pos2+len(invoegen), lijst
 
 def in_to_tree(infix): # infix = lijst met in volgorde de delen van de uitdrukking (bv [4, '+', 'x'])
     infix = [str(i) for i in infix]
@@ -27,22 +32,14 @@ def in_to_tree(infix): # infix = lijst met in volgorde de delen van de uitdrukki
             l -= int(l_go) # naar buiten bubbelen als ze nog niet geblokkeerd zijn
             r += int(r_go)
             if l < 0:
-                infix = [op+'$', '('] + infix
-                l_go = False
-                r += 2
+                l_go, r, infix = verwerk_afwerking(infix, 0, [op+'$', '('], r)
             elif str(infix[l]) in operators and operators[infix[l]]['prec'] <= operators[op]['prec']:
-                infix.insert(l+1, '(')
-                infix.insert(l+1, op+'$')
-                l_go = False
-                r += 2
+                l_go, r, infix = verwerk_afwerking(infix, l+1, [op+'$', '('], r)
             elif infix[l] == '(':
-                if l == 0 or (infix[l-1] not in functions.keys() and (type(infix[l-1])==str and '$' not in infix[l-1])):
-                    infix.insert(l, op+'$')
+                if l == 0 or (infix[l-1] not in functions.keys() and '$' not in infix[l-1]):
+                    l_go, r, infix = verwerk_afwerking(infix, l, [op+'$'], r)
                 else:
-                    infix.insert(l+1, '(')
-                    infix.insert(l+1, op+'$')
-                l_go = False
-                r += 1
+                    l_go, r, infix = verwerk_afwerking(infix, l+1, [op+'$', '('], r)
             elif infix[l] == ')':
                 l = skip_haakjes(infix, l)
 
@@ -52,17 +49,19 @@ def in_to_tree(infix): # infix = lijst met in volgorde de delen van de uitdrukki
             elif str(infix[r]) in operators and operators[infix[r]]['prec'] <= operators[op]['prec']:
                 infix.insert(r, ')')
                 r_go = False
-            elif infix[r] == ')':
-                r_go = False
             elif infix[r] == '(':
                 r = skip_haakjes(infix, r)
+            elif infix[r] == ')':
+                r_go = False
+
     # dollartekens weghalen en output teruggeven
     infix = '$'.join(infix).replace('$$', '$').split('$')   
     return infix
 
 def main():
-    infx = ['max', '(', '(', 4, '-', 5, ')', ',', 2,')']
+    infx = ['sin','(', '(', 4, '-', 5, ')', '^', 2,')', '/', 6]
     print(in_to_tree(infx))
+
 
 if __name__ == '__main__':
     main()
