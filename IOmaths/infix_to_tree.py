@@ -31,6 +31,20 @@ def in_to_tree(infix): # infix = lijst met in volgorde de delen van de uitdrukki
         while l_go or r_go:
             l -= int(l_go) # naar buiten bubbelen als ze nog niet geblokkeerd zijn
             r += int(r_go)
+            if r >= len(infix):
+                infix.append(')')
+                r_go = False
+            elif str(infix[r]) in operators and operators[infix[r]]['prec'] <= operators[op]['prec']:
+                infix.insert(r, ')')
+                r_go = False
+            elif infix[r] == '(':
+                r = skip_haakjes(infix, r)
+            elif infix[r] == ')':
+                i = skip_haakjes(infix, r)
+                if i > 0 and (infix[i-1] in functions.keys() or infix[i-1][-1] == '$'): # kijkt of het haakjes van een functie zijn of niet
+                    infix.insert(r, ')')
+                r_go = False
+                
             if l < 0:
                 l_go, r, infix = verwerk_afwerking(infix, 0, [op+'$', '('], r)
             elif str(infix[l]) in operators and operators[infix[l]]['prec'] <= operators[op]['prec']:
@@ -43,16 +57,8 @@ def in_to_tree(infix): # infix = lijst met in volgorde de delen van de uitdrukki
             elif infix[l] == ')':
                 l = skip_haakjes(infix, l)
 
-            if r >= len(infix):
-                infix.append(')')
-                r_go = False
-            elif str(infix[r]) in operators and operators[infix[r]]['prec'] <= operators[op]['prec']:
-                infix.insert(r, ')')
-                r_go = False
-            elif infix[r] == '(':
-                r = skip_haakjes(infix, r)
-            elif infix[r] == ')':
-                r_go = False
+
+        print(''.join(infix))
 
     # dollartekens weghalen en output teruggeven
     infix = '$'.join(infix).replace('$$', '$').split('$')   
