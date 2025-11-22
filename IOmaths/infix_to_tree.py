@@ -44,7 +44,7 @@ def in_to_tree(infix): # infix = lijst met in volgorde de delen van de uitdrukki
                 if i > 0 and (infix[i-1] in functions.keys() or infix[i-1][-1] == '$'): # kijkt of het haakjes van een functie zijn of niet
                     infix.insert(r, ')')
                 r_go = False
-                
+
             if l < 0:
                 l_go, r, infix = verwerk_afwerking(infix, 0, [op+'$', '('], r)
             elif str(infix[l]) in operators and operators[infix[l]]['prec'] <= operators[op]['prec']:
@@ -56,9 +56,6 @@ def in_to_tree(infix): # infix = lijst met in volgorde de delen van de uitdrukki
                     l_go, r, infix = verwerk_afwerking(infix, l+1, [op+'$', '('], r)
             elif infix[l] == ')':
                 l = skip_haakjes(infix, l)
-
-
-        print(''.join(infix))
 
     # dollartekens weghalen en output teruggeven
     infix = '$'.join(infix).replace('$$', '$').split('$')   

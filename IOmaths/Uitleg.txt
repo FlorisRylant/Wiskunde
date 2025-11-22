@@ -12,3 +12,13 @@ infix_to_tree:
 - niet mooi
 - te veel analogiën tussen links en rechts die niet korter zijn
 - te veel variabelen
+
+tree_to_postfix:
+- zelfbedacht (vrij simpel)
+- basically alle operatoren achter de haakjes ipv ervoor
+- haakjes weg
+- komma's weg
+
+tree_to_infix:
+- zelfbedacht
+- voor alle operatoren: operator binnen de haakjes zetten. Kijken of de haakjes weg mogen is voor later.
