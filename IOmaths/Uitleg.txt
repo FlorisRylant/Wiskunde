@@ -1,0 +1,24 @@
+data.py: alle noodzakelijke data (functielijst, operatoren, ...)
+IOmaths bevat verschillende algoritmes (of moet die nog bevatten):
+Elk algoritme is om te wisselen tussen infixnotatie, postfixnotatie en treenotatie
+- infix_to_tree: van infix naar treenotatie
+- tree_to_infix: analoog
+- tree_to_postfix: analoog:
+- postfix to tree is niet mogelijk wegens dubbelzinnigheden bij functies met een variabel aantal argumenten (min, max, ...)
+-> postfix to tree bestaat dus niet
+
+infix_to_tree:
+- zelfbedacht
+- niet mooi
+- te veel analogiën tussen links en rechts die niet korter zijn
+- te veel variabelen
+
+tree_to_postfix:
+- zelfbedacht (vrij simpel)
+- basically alle operatoren achter de haakjes ipv ervoor
+- haakjes weg
+- komma's weg
+
+tree_to_infix:
+- zelfbedacht
+- voor alle operatoren: operator binnen de haakjes zetten. Kijken of de haakjes weg mogen is voor later.
