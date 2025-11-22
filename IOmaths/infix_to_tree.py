@@ -31,7 +31,9 @@ def in_to_tree(infix): # infix = lijst met in volgorde de delen van de uitdrukki
         while l_go or r_go:
             l -= int(l_go) # naar buiten bubbelen als ze nog niet geblokkeerd zijn
             r += int(r_go)
-            if r >= len(infix):
+            if not r_go:
+                pass
+            elif r >= len(infix):
                 infix.append(')')
                 r_go = False
             elif str(infix[r]) in operators and operators[infix[r]]['prec'] <= operators[op]['prec']:
@@ -45,7 +47,9 @@ def in_to_tree(infix): # infix = lijst met in volgorde de delen van de uitdrukki
                     infix.insert(r, ')')
                 r_go = False
 
-            if l < 0:
+            if not l_go:
+                pass
+            elif l < 0:
                 l_go, r, infix = verwerk_afwerking(infix, 0, [op+'$', '('], r)
             elif str(infix[l]) in operators and operators[infix[l]]['prec'] <= operators[op]['prec']:
                 l_go, r, infix = verwerk_afwerking(infix, l+1, [op+'$', '('], r)
@@ -58,7 +62,7 @@ def in_to_tree(infix): # infix = lijst met in volgorde de delen van de uitdrukki
                 l = skip_haakjes(infix, l)
 
     # dollartekens weghalen en output teruggeven
-    infix = '$'.join(infix).replace('$$', '$').split('$')   
+    infix = '$'.join(infix).replace('$$', '$').split('$')
     return infix
 
 def main():
