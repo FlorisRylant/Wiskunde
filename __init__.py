@@ -1,0 +1,1 @@
+# zou een package maken van heel de Wiskundefolder?

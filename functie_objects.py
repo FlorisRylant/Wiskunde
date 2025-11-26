@@ -1,4 +1,4 @@
-from wiskundedata import functions, operators
+from IOmaths.data import functions, operators
 
 class Functie:
     def __init__(self, operator, *argumenten):

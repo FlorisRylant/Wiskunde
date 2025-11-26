@@ -1,9 +1,9 @@
-from data import operators, functions, special, aliases
+from IOmaths.data import operators, functions, special, aliases
 special_things = special.union(functions).union(operators) # handig als alles vervangen moet worden
 
-from infix_to_tree import in_to_tree
-from tree_to_infix import tree_to_in
-from tree_to_postfix import tree_to_post
+from IOmaths.infix_to_tree import in_to_tree
+from IOmaths.tree_to_infix import tree_to_in
+from IOmaths.tree_to_postfix import tree_to_post
 
 def preprocessor(expression): # splitst alles op        
     if type(expression) == list:
@@ -34,11 +34,13 @@ def convert(start, typ='tree'):
     if start[-1] in special_things and start[-1] != ')':
         gegevenstype = 'postfix'
     else:
-        gegevenstype = 'tree'
+        if start[1:].count('(') == 0:
+            gegevenstype = 'infix'
+        else:
+            gegevenstype = 'tree'
         for i, thing in enumerate(start[:-1]):
-            if start[i+1] == '(' and not thing in set(operators.keys()).union(functions.keys()): # kijkt of er voor elk haakje een operator staat
+            if start[i+1] == '(' and not thing in set(operators.keys()).union(functions.keys()) and gegevenstype != 'infix': # kijkt of er voor elk haakje een operator staat
                 gegevenstype = 'infix'
-                break
 
     # afhandelen van het omzetten
     if gegevenstype == typ:
@@ -48,8 +50,6 @@ def convert(start, typ='tree'):
     elif gegevenstype == 'postfix':
         raise TypeError('Kan postfix niet naar een andere structuur omzetten')
     
-    print(''.join(start))
-
     if typ == 'tree':
         return start
     elif typ == 'infix':

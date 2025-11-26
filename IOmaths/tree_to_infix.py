@@ -1,5 +1,5 @@
-from data import operators
-from infix_to_tree import skip_haakjes
+from IOmaths.data import operators
+from IOmaths.infix_to_tree import skip_haakjes
 
 def tree_to_in(tree):
     tree = [str(i) for i in tree]
