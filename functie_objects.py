@@ -5,6 +5,13 @@ class Functie:
         self.__op = operator
         if type(argumenten) != tuple:
             argumenten = tuple(argumenten)
+        if self.__op in operators: # kijkt of hij de operator moet vervangen door het inverse
+            if self.__op == '-':
+                argumenten[1] = Functie('*', Constante(-1), argumenten[1])
+                self.__op = '+'
+            elif self.__op == '/':
+                argumenten[1] = Functie('^', Constante(-1), argumenten[1])
+                self.__op = '*'
         self.__args = argumenten
         self.__onbekendes = set()
         for arg in self.__args:
