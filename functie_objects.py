@@ -1,4 +1,4 @@
-from wiskundedata import functions
+from wiskundedata import functions, operators
 
 class Functie:
     def __init__(self, operator, *argumenten):
@@ -40,7 +40,31 @@ class Functie:
                 except:
                     raise ValueError(f"{vars} past niet in de functie")
             raise ValueError(f"Meer dan 1 variabele gevraagd, 1 gegeven")
+        
+    def __add__(self, other):
+        if isinstance(other, Functie):
+            return Functie('+', self, other)
+        raise TypeError(f'Kan type {type(other)} niet als functie interpreteren.')
+    
+    def __mul__(self, other):
+        if isinstance(other, Functie):
+            return Functie('*', self, other)
+        raise TypeError(f'Kan type {type(other)} niet als functie interpreteren.')
 
+    def __pow__(self, other):
+        if isinstance(other, Functie):
+            return Functie('^', self, other)
+        raise TypeError(f'Kan type {type(other)} niet als functie interpreteren.')
+
+    def __sub__(self, other):
+        if isinstance(other, Functie):
+            return Functie('+', self, Functie('*', Constante(-1), other))
+        raise TypeError(f'Kan type {type(other)} niet als functie interpreteren.')
+    
+    def __truediv__(self, other):
+        if isinstance(other, Functie):
+            return Functie('*', self, Functie('^', Constante(-1), other))
+        raise TypeError(f'Kan type {type(other)} niet als functie interpreteren.')
 
     def __str__(self):
         if self.__op in '+*^':
@@ -60,6 +84,20 @@ class Functie:
         out = out[:-2] + "Variabelen: " + ', '.join(self.__onbekendes)
         return out
     
+    def treerepr(self): # omzetten naar interpreteerbare treecode
+        out = self.__op + '('
+        for a in self.__args:
+            out += a.treerepr() + ','
+        return out[:-1] + ')'
+    
+    def simplified(self): # dit gaat een totaal stort worden op vlak van pointers
+        arg = []
+        for a in enumerate(self.__args):
+            arg.append(a.simplified())
+        if min([type(a)==Constante for a in arg]): # kijkt of alle argumenten constanten zijn
+            return Constante(self(0)) # geeft simpele vorm terug
+        return self
+    
 
 class Constante(Functie):
     def __init__(self, waarde):
@@ -78,6 +116,12 @@ class Constante(Functie):
     
     def get_onbekendes(self):
         return set()
+    
+    def treerepr(self):
+        return str(self.__val)
+    
+    def simplified(self):
+        return self
 
 
 class Onbekende(Functie):
@@ -109,16 +153,23 @@ class Onbekende(Functie):
     def get_onbekendes(self): # om de onbekendes te laten opzalmen
         return {self.__naam}
 
+    def treerepr(self):
+        return self.__naam
+    
+    def simplified(self):
+        return self
+
 
 def main():
     a = Constante(2)
     b = Constante(-4)
     x = Onbekende('x')
     y = Onbekende('y')
-    f = Functie('min', Functie('+', a, Functie('*', b, x)), y, a)
+    f = Functie('min', a + b*x, y, a)
     print(f)
     print(f(0, 1))
     print(f({'y':10, 'x':5}))
+    print(f.treerepr())
 
 if __name__ == '__main__':
     main()
