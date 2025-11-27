@@ -33,9 +33,9 @@ def print_functie(f):
 
 
 def main():
-    f = maak_functie('(5+x)*x')
+    f = maak_functie('8/x+pi')
     print_functie(f)
-    print(f"f(4) = {f(4)}")
+    print(f"f(4) = {f(3.1415, 4)}")
 
 if __name__ == '__main__':
     main()

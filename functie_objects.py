@@ -3,16 +3,16 @@ from IOmaths.data import functions, operators
 class Functie:
     def __init__(self, operator, *argumenten):
         self.__op = operator
-        if type(argumenten) != tuple:
-            argumenten = tuple(argumenten)
+        if type(argumenten) != list:
+            argumenten = list(argumenten)
         if self.__op in operators: # kijkt of hij de operator moet vervangen door het inverse
             if self.__op == '-':
                 argumenten[1] = Functie('*', Constante(-1), argumenten[1])
                 self.__op = '+'
             elif self.__op == '/':
-                argumenten[1] = Functie('^', Constante(-1), argumenten[1])
+                argumenten[1] = Functie('^', argumenten[1], Constante(-1),)
                 self.__op = '*'
-        self.__args = argumenten
+        self.__args = tuple(argumenten)
         self.__onbekendes = set()
         for arg in self.__args:
             self.__onbekendes = self.__onbekendes.union(arg.get_onbekendes())
@@ -31,7 +31,7 @@ class Functie:
                 return args[0] ** args[1]
 
             if self.__op in functions:
-                return functions[self.__op]['f'](args)
+                return functions[self.__op]['f'](*args)
             
         elif type(vars) == tuple or type(vars) == list:
             if len(vars) == len(self.__onbekendes):

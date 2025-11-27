@@ -1,7 +1,7 @@
 from IOmaths.data import operators, functions, special, aliases
 special_things = special.union(functions).union(operators) # handig als alles vervangen moet worden
 
-from IOmaths.infix_to_tree import in_to_tree
+from IOmaths.infix_to_tree import in_to_tree, skip_haakjes
 from IOmaths.tree_to_infix import tree_to_in
 from IOmaths.tree_to_postfix import tree_to_post
 
@@ -13,11 +13,16 @@ def preprocessor(expression): # splitst alles op
             expression = ''.join(expression) # gaat verder met het string_to_list-programma
 
     if type(expression) == str:
+        expression = '$' + expression + '$' # zorgt dat de eerste en laatste in de lijst zeker leeg zijn
+        for i, thing in enumerate(expression):
+            if thing == '-' and expression[i-1] in {'$', '(', ','}.union(operators): # kijkt of de - achter een operator of speciaal teken komt
+                if expression[i:skip_haakjes([c for c in expression], i)].count(',') == 0: # kijkt of er achter een tree-vorm komt
+                    expression = expression[:i] + '~' + expression[i+1:] # vervangt unaire -
         for a in aliases: # vervangt alle aliases
             expression = expression.replace(a, aliases[a])
         for thing in special_things:
             expression = expression.replace(thing, '$'+thing+'$')
-        expression = '$' + expression + '$' # zorgt dat de eerste en laatste in de lijst zeker leeg zijn
+        expression = expression.replace('~', '-')
         expression = expression.replace('$$', '$')
         return expression.split('$')[1:-1] # geeft de lijst terug zonder de eerste en laatste
     
@@ -34,13 +39,14 @@ def convert(start, typ='tree'):
     if start[-1] in special_things and start[-1] != ')':
         gegevenstype = 'postfix'
     else:
-        if start[1:].count('(') == 0:
-            gegevenstype = 'infix'
-        else:
-            gegevenstype = 'tree'
-        for i, thing in enumerate(start[:-1]):
-            if start[i+1] == '(' and not thing in set(operators.keys()).union(functions.keys()) and gegevenstype != 'infix': # kijkt of er voor elk haakje een operator staat
-                gegevenstype = 'infix'
+        gegevenstype = 'infix'
+        if not start[0] in operators: # kijkt dat hij al zeker geen treestructuur heeft vanvoor
+            for i in range(1, len(start)-1): # gaat over alles in de lijst buiten de twee randpunten
+                if start[i] in operators and (start[i-1]=='(' or start[i-1]==','): # kijkt of het treenotatie impliceert
+                    gegevenstype = 'tree'
+                    break
+        else: # als hij wél begint met een treestructuur
+            gegevenstype = 'tree'          
 
     # afhandelen van het omzetten
     if gegevenstype == typ:
