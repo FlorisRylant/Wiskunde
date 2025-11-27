@@ -28,10 +28,13 @@ def maak_functie(start):
     start = convert(start) # zet om naar tree
     return functie_recursie(start)
 
+def print_functie(f):
+    print(''.join(convert(f.treerepr(), 'infix')))
+
 
 def main():
     f = maak_functie('(5+x)*x')
-    print(f)
+    print_functie(f)
     print(f"f(4) = {f(4)}")
 
 if __name__ == '__main__':
