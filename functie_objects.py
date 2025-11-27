@@ -1,4 +1,6 @@
 from IOmaths.data import functions, operators
+from math import pi, e, tau
+constantes = {'pi':pi, 'e':e, 'tau':tau}
 
 class Functie:
     """
@@ -38,9 +40,10 @@ class Functie:
     def get_onbekendes(self): # geeft een set met alle onbekendes in de functie
         return self.__onbekendes
     
-    def __call__(self, *vars): # vars is een dictionary met alle onbekendes, kan ook omzetten naar de dict
-        if len(vars) == 1 and type(vars[0]) == dict: # vars is een tuple met één dictionary in
-            args = tuple([arg(vars[0]) for arg in self.__args]) # de argumenten, allemaal voor de gegeven waardes
+    def __call__(self, *vartuple, **vardict): # vars is een dictionary met alle onbekendes, kan ook omzetten naar de dict
+        vars = constantes | vardict # voegt de constantes bij de vardict om de variabelen samen te krijgen
+        if set(vars.keys()).issuperset(self.get_onbekendes()): # kijkt of alles gegeven is
+            args = tuple([arg(0, **vars) for arg in self.__args]) # de argumenten, allemaal voor de gegeven waardes
             if self.__op == '+':
                 return args[0] + args[1]
             if self.__op == '*':
@@ -50,8 +53,22 @@ class Functie:
 
             if self.__op in functions:
                 return functions[self.__op]['f'](*args)
-            
-        elif type(vars) == tuple or type(vars) == list:
+            raise NameError(f'Operator {self.__op} niet gevonden')
+        
+        vars = {}
+        for c in constantes:
+            vars[c] = constantes[c]
+        if len(vartuple) == len(self.get_onbekendes()): # als ook de constanten zoals pi gegeven zijn
+            for i, geg in enumerate(sorted(self.get_onbekendes())):
+                vars[geg] = vartuple[i]
+        elif len(vartuple) == len(self.get_onbekendes().difference(vars.keys())): # als enkel de echte variabelen gegeven zijn
+            for i, geg in enumerate(sorted(self.get_onbekendes().difference(vars.keys()))): # voegt alle anderen toe
+                vars[geg] = vartuple[i]
+        else:
+            raise IOError(f'Gegevens {vartuple} en {vardict} zijn ongeldig.')
+        return self(0, **vars)
+
+        """elif type(vars) == tuple or type(vars) == list:
             if len(vars) == len(self.__onbekendes):
                 variabelen = {}
                 for i, key in enumerate(sorted(self.__onbekendes)):
@@ -65,7 +82,8 @@ class Functie:
                 except:
                     raise ValueError(f"{vars} past niet in de functie")
             raise ValueError(f"Meer dan 1 variabele gevraagd, 1 gegeven")
-        
+        """
+
     def __add__(self, other):
         if isinstance(other, Functie):
             return Functie('+', self, other)
@@ -130,7 +148,7 @@ class Constante(Functie):
         if self.__val%1 < 0.00005:
             self.__val = int(waarde)
 
-    def __call__(self, vars):
+    def __call__(self, *args, **kwargs):
         return self.__val
     
     def __str__(self):
@@ -153,11 +171,11 @@ class Onbekende(Functie):
     def __init__(self, naam):
         self.__naam = naam # moet een string zijn
     
-    def __call__(self, vars):
-        if self.__naam in vars:
-            if isinstance(vars[self.__naam], str):
-                return float(vars[self.__naam])
-            return vars[self.__naam]
+    def __call__(self, *args, **kwargs):
+        if self.__naam in kwargs:
+            if isinstance(kwargs[self.__naam], str):
+                return float(kwargs[self.__naam])
+            return kwargs[self.__naam]
         raise KeyError(f"Variabele {self.__naam} niet gegeven")
     
     def __str__(self):
@@ -193,7 +211,7 @@ def main():
     f = Functie('min', a + b*x, y, a)
     print(f)
     print(f(0, 1))
-    print(f({'y':10, 'x':5}))
+    print(f(5, 10))
     print(f.treerepr())
 
 if __name__ == '__main__':
