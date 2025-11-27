@@ -5,7 +5,14 @@ from IOmaths.infix_to_tree import in_to_tree, skip_haakjes
 from IOmaths.tree_to_infix import tree_to_in
 from IOmaths.tree_to_postfix import tree_to_post
 
-def preprocessor(expression): # splitst alles op        
+def preprocessor(expression):
+    """
+    Splitst de gegeven structuur in een lijst waar alles deftig gescheiden is.
+    - Als het al een lijst is gaat het er van uit dat die lijst goed is.
+    - Als het een string is worden de unaire minnen eerst weggewerkt, dan gesplitst en de minnen teruggezet.
+    Splitsmechanisme: alle speciale symbolen tussen twee $-tekens zetten en dan alles splitsen op de dollars
+    (mits enige verfijning voor een hoop randgevallen enzo)
+    """        
     if type(expression) == list:
         if len(set(aliases.keys()).intersection(expression)) == 0: # als er niets vervangen moet worden kan een list zo door
             return expression
@@ -28,7 +35,9 @@ def preprocessor(expression): # splitst alles op
     
     raise TypeError(f"Kan geen {type(expression)} omzetten.")
 
+
 def convert(start, typ='tree'):
+    """Zet infix of tree-notatie om naar infix, tree of postfix."""
     start = preprocessor(start)
 
     typ = typ.lower().strip()

@@ -2,7 +2,13 @@ from IOmaths.interpreter import convert, functions, operators
 from IOmaths.infix_to_tree import skip_haakjes
 from functie_objects import Functie, Constante, Onbekende
 
-def functie_recursie(tree): # maakt van een boom een functie
+def functie_recursie(tree):
+    """
+    Maakt van een lijst die een gesplitste treeweergave voorstelt een Functie-tree.
+    - Steekt de operator (voor de haakjes) in self.__op
+    - Recurseert over de argumenten en steekt die dan in self.__args
+    
+    Als het een constante of een onbekende is wordt dat in de respectievelijke functie gestoken."""
     if '(' not in tree: # eindnode van de tree
         if tree[0].isnumeric():
             return Constante(tree[0])
@@ -25,6 +31,9 @@ def functie_recursie(tree): # maakt van een boom een functie
     raise KeyError(f'Kan {tree[0]} niet in een functie steken')
 
 def maak_functie(start):
+    """
+    Maakt van eender welke notatie een werkende Functie-structuur
+    """
     start = convert(start) # zet om naar tree
     return functie_recursie(start)
 

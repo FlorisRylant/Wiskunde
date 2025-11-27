@@ -1,6 +1,24 @@
 from IOmaths.data import functions, operators
 
 class Functie:
+    """
+    Functie-class:
+    structuur: operator / functie (je kan een binaire operator ook zien als functie) en argumenten
+    => Parent-class van Onbekende en Constante omdat die een groot deel hetzelfde doen als Functie
+    self.__op = operator / functie
+    self.__args = tuple met argumenten, allemaal van het type Functie, Constante of Onbekende
+
+    METHODS:
+    intern:
+    get_onbekendes() -> geeft een lijst met alle onbekendes in die functie
+    treerepr() -> geeft de tree-notatie: robuuster dan infix, gemakkelijker voor computers en vrij simpel om te zetten
+
+    extern:
+    __call__(*vars) -> vult de variabelen in in de functie en heeft de output in een int/float
+    de normale bewerkingen tussen functies (+, -, *, / en **) -> geven een Functie-object terug
+    __str__() -> functie in basic infixnotatie
+    __repr__() -> informatie over de functie, slecht leesbaar bij ingewikkelde structuren
+    """
     def __init__(self, operator, *argumenten):
         self.__op = operator
         if type(argumenten) != list:
@@ -21,7 +39,7 @@ class Functie:
         return self.__onbekendes
     
     def __call__(self, *vars): # vars is een dictionary met alle onbekendes, kan ook omzetten naar de dict
-        if len(vars) == 1 and type(vars[0]) == dict:
+        if len(vars) == 1 and type(vars[0]) == dict: # vars is een tuple met één dictionary in
             args = tuple([arg(vars[0]) for arg in self.__args]) # de argumenten, allemaal voor de gegeven waardes
             if self.__op == '+':
                 return args[0] + args[1]
