@@ -21,6 +21,7 @@ class Functie:
     de normale bewerkingen tussen functies (+, -, *, / en **) -> geven een Functie-object terug
     __str__() -> functie in basic infixnotatie
     __repr__() -> informatie over de functie, slecht leesbaar bij ingewikkelde structuren
+    grafiek(x_lims, y_lims, n) -> plot de grafiek met ingestelde limieten en hoeveelheid intervallen
     """
     def __init__(self, operator, *argumenten):
         self.__op = operator
