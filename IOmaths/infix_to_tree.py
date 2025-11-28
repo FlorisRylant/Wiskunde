@@ -1,4 +1,4 @@
-from data import functions, operators, special
+from IOmaths.data import functions, operators, special
 
 def skip_haakjes(lijst, startpos): # springt over het haakjesblok waar hij zit, anders blijft hij gewoon
     if lijst[startpos] == ')':

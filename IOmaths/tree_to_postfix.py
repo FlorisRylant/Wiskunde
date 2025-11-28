@@ -1,4 +1,4 @@
-from infix_to_tree import skip_haakjes
+from IOmaths.infix_to_tree import skip_haakjes
 
 def tree_to_post(tree):
     tree = [str(i) for i in tree]

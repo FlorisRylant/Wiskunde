@@ -1,0 +1,53 @@
+from IOmaths.interpreter import convert, functions, operators
+from IOmaths.infix_to_tree import skip_haakjes
+from functie_objects import Functie, Constante, Onbekende
+
+def functie_recursie(tree):
+    """
+    Maakt van een lijst die een gesplitste treeweergave voorstelt een Functie-tree.
+    - Steekt de operator (voor de haakjes) in self.__op
+    - Recurseert over de argumenten en steekt die dan in self.__args
+    
+    Als het een constante of een onbekende is wordt dat in de respectievelijke functie gestoken."""
+    if '(' not in tree: # eindnode van de tree
+        if tree[0].isnumeric():
+            return Constante(tree[0])
+        return Onbekende(tree[0])
+    if tree[0] in functions or tree[0] in operators:
+        args = []
+        i = 2
+        j = 2
+        while i < len(tree):
+            if tree[i] == '(':
+                i = skip_haakjes(tree, i)
+            elif tree[i] == ',':
+                args.append(tree[j:i])
+                j = i+1
+                i += 1
+            i += 1
+        args.append(tree[j:-1])
+        args = tuple([functie_recursie(a) for a in args])
+        return Functie(tree[0], *args) # de asterisk voor args "unpackt" de tuple
+    raise KeyError(f'Kan {tree[0]} niet in een functie steken')
+
+def maak_functie(start):
+    """
+    Maakt van eender welke notatie een werkende Functie-structuur
+    """
+    start = convert(start) # zet om naar tree
+    return functie_recursie(start)
+
+def print_functie(f):
+    print(''.join(convert(f.treerepr(), 'infix')))
+
+
+def main():
+    f = maak_functie('sin(pi*x)*2')
+    g = maak_functie('e^x')
+    print_functie(f)
+    print(f"f(4) = {f(4)}")
+    f.grafiek()
+    g.grafiek(x_lims=(-2,5),y_lims=[0,10])
+
+if __name__ == '__main__':
+    main()

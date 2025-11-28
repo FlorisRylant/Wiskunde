@@ -1,4 +1,4 @@
-from wiskundedata import functions, aliases, operators, special
+from IOmaths.data import functions, aliases, operators, special
 
 def shunting_yard(expression):
     """
