@@ -2,6 +2,7 @@
 
 Hoofdfocus van deze repo:
 - Functie-class hebben die vlot met gebruikers kan interageren
+- Functiegrafieken kunnen tekenen
 - Functies kunnen afleiden
 - Kunnen checken of het een algebraïsche functie is
 - Kunnen kijken of het een veeltermfunctie is en zo ja, welke graad?
