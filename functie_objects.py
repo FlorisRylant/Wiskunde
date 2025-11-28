@@ -128,15 +128,16 @@ class Functie:
             return Constante(self(0)) # geeft simpele vorm terug
         return self
     
-    def grafiek(self, x_lims=[-10, 10], y_lims=[-10, 10]):
+    def grafiek(self, x_lims=(-10, 10), y_lims=(-10, 10), n=200):
         plt.cla()
-        X = [x_lims[0] + i*(x_lims[1]-x_lims[0])/100 for i in range(101)]
+        X = [x_lims[0] + i*(x_lims[1]-x_lims[0])/n for i in range(n+1)]
         try:
             Y = [self(x) for x in X]
         except:
             raise IOError(f'Kan geen 2D-grafiek maken van deze functie.')
-            return None
         plt.plot(X, Y)
+        plt.ylim(*y_lims)
+        plt.xlim(*x_lims)
         plt.show()
     
 
