@@ -1,11 +1,7 @@
-def func(*args, **kwargs):
-    gegevens = {'pi':3.1415, 'e':2.78}
-    gegevens.update(kwargs)
-    print(args, len(args))
-    print(gegevens, len(gegevens))
+from matplotlib import pyplot as plt
 
-d1 = {'a':5, 'b':3}
-d2 = {'c':4, 'b':9}
-print(d1, d2)
-d3 = d1 | d2
-print(d1, d2, d3)
+X = list(range(10))
+Y = [x*x for x in X]
+print(X, Y)
+plt.plot(X, Y)
+plt.show()

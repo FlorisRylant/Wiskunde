@@ -1,5 +1,6 @@
 from IOmaths.data import functions, operators
 from math import pi, e, tau
+from matplotlib import pyplot as plt
 constantes = {'pi':pi, 'e':e, 'tau':tau}
 
 class Functie:
@@ -49,6 +50,8 @@ class Functie:
             if self.__op == '*':
                 return args[0] * args[1]
             if self.__op == '^':
+                if (args[0])**2 < 0.000001:
+                    return 0
                 return args[0] ** args[1]
 
             if self.__op in functions:
@@ -67,22 +70,6 @@ class Functie:
         else:
             raise IOError(f'Gegevens {vartuple} en {vardict} zijn ongeldig.')
         return self(0, **vars)
-
-        """elif type(vars) == tuple or type(vars) == list:
-            if len(vars) == len(self.__onbekendes):
-                variabelen = {}
-                for i, key in enumerate(sorted(self.__onbekendes)):
-                    variabelen[key] = vars[i]
-                return self(variabelen)
-            raise KeyError(f"{len(self.__onbekendes)} onbekendes, {len(vars)} gegevens")
-        elif type(vars) != dict:
-            if len(self.__onbekendes) == 1:
-                try:
-                    return self(float(vars))
-                except:
-                    raise ValueError(f"{vars} past niet in de functie")
-            raise ValueError(f"Meer dan 1 variabele gevraagd, 1 gegeven")
-        """
 
     def __add__(self, other):
         if isinstance(other, Functie):
@@ -140,6 +127,17 @@ class Functie:
         if min([type(a)==Constante for a in arg]): # kijkt of alle argumenten constanten zijn
             return Constante(self(0)) # geeft simpele vorm terug
         return self
+    
+    def grafiek(self, x_lims=[-10, 10], y_lims=[-10, 10]):
+        plt.cla()
+        X = [x_lims[0] + i*(x_lims[1]-x_lims[0])/100 for i in range(101)]
+        try:
+            Y = [self(x) for x in X]
+        except:
+            raise IOError(f'Kan geen 2D-grafiek maken van deze functie.')
+            return None
+        plt.plot(X, Y)
+        plt.show()
     
 
 class Constante(Functie):
@@ -207,12 +205,11 @@ def main():
     a = Constante(2)
     b = Constante(-4)
     x = Onbekende('x')
-    y = Onbekende('y')
-    f = Functie('min', a + b*x, y, a)
+    f = Functie('min', a + b*x, x, a)
     print(f)
-    print(f(0, 1))
-    print(f(5, 10))
+    print(f(5))
     print(f.treerepr())
+    f.grafiek()
 
 if __name__ == '__main__':
     main()
