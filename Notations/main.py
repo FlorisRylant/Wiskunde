@@ -15,6 +15,7 @@ def preprocess(expression):
     zet input (expression) om naar een bruikbare lijst voor de algoritmes:
     - als het al een lijst is wordt die nog naar een string omgezet en verwerkt (korter voor alle randgevallen)
     - als het een string is wordt elk speciaal teken omhult in $-tekens en later gesplitst (mits enige verfijning)
+    - haakjesparen die slechts één ding bevatten worden verwijderd tenzij er een functie voor staat
     """
     if type(expression) == list: expression = ''.join([str(i) for i in expression])
     elif type(expression) != str: raise IOError(f'Type {type(expression)} unreadable')
