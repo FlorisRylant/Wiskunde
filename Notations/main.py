@@ -29,7 +29,7 @@ def preprocess(expression):
     
     for thing in sorted(special.union(functions).union(operators), key=lambda k:len(k), reverse=True): # zet een $ bij elke scheiding en zet functies in uppercase (voor sinh en sin enzo)
         expression = expression.replace(thing, f'${thing.upper()}$') # upper zodat functies elkaar niet kunnen overriden
-    expression.lower()
+    expression = expression.lower()
     expression = expression.replace('$$', '$') # voor als er twee speciale dingen naast elkaar stonden
     expression = expression.split('$') # splitst alles en haalt de buffer weg
 
@@ -54,7 +54,7 @@ def preprocess(expression):
     # dubbele haakjesparen wegwerken:
     positie = 0
     while positie < len(expression)-1:
-        if expression[positie] == '(' and (expression[positie-1] not in functions) and skip_haakjes(expression, positie+1)+1 == skip_haakjes(expression, positie):
+        if  expression[positie]=='(' and skip_haakjes(expression, positie+1)+1 == skip_haakjes(expression, positie) and (expression[positie+1]=='(' or expression[positie-1] not in functions):
             del expression[skip_haakjes(expression, positie)]
             del expression[positie]
         else:
@@ -63,9 +63,34 @@ def preprocess(expression):
     return expression[1:-1] # haalt de buffer eraf
 
 
+def convert(expression, naar='tree', gegeven='default', processed=False):
+    naar, gegeven = naar.lower(), gegeven.lower()
+    if not processed: expression = preprocess(expression) # wordt genegeerd als het al gedaan is om té veel nutteloos werk te vermijden
+    if gegeven != 'default': # blok als het gegeven type geweten is
+        if naar == gegeven: return expression
+
+        if gegeven == 'infix': expression = in2tree(expression) # omzetten van infix naar tree
+        elif gegeven == 'postfix': raise TypeError('Kan postfix niet omzetten naar andere types') # wiskundig niet altijd mogelijk
+        elif gegeven != 'tree': raise TypeError(f'Kan {gegeven} niet omzetten naar tree (tussenstap).')
+
+        if naar == 'tree': return expression
+        elif naar == 'infix': return tree2in(expression)
+        elif naar == 'postfix': return tree2post(expression)
+        raise TypeError(f'Kan niet omzetten van tree naar {naar}.')
+    
+    ops = set(functions).union(operators)
+    if expression[-1] in ops:
+        return convert(expression, naar, 'postfix', True)
+    if ',' in expression and expression[expression.index(',')-1] in ops:
+        return convert(expression, naar, 'tree', True)
+    return convert(expression, naar, 'infix', True)
+    
+
+
+
 def main():
-    expr = 'min((-pi+-2!, [10**0.1]))'
-    print(preprocess(expr))
+    expr = 'min((sin(4), 10**0.1))'
+    print(''.join(convert(expr, 'postfix')))
 
 if __name__ == '__main__':
     main()

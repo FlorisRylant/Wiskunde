@@ -26,7 +26,7 @@ def tree2post(tree):
 
 
 def main():
-    expression = ['(', 'sin', ',', '(', '*', ',', '5', ',', '(','-', ',', '2', ',', 'pi', ')', ')', ')']
+    expression = ['(', 'min', ',', '(', '*', ',', '5', ',', '(','-', ',', '2', ',', 'pi', ')', ')', ')']
     print(tree2post(expression))
 
 if __name__ == '__main__':
