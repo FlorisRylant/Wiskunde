@@ -4,7 +4,13 @@ except: from Notations.basis import *
 
 def in2tree(infix):
     """Sterk verbeterde versie van de eerste infix_to_tree:
-    verbetering: 41 regels code -> 20 regels, deze versie haalt onnodige haakjes weg en is compatibeler met unaire operatoren én robuuster
+    verbeteringen:
+    - 41 regels code -> 20 regels
+    - 8 variabelen met rare namen -> 3 variabelen die nuttiger aanvoelen
+    - eleganter in het algemeen (alle randgevallen worden inherent gecompenseerd door de buffer en skip_haakjes)
+    - dit algoritme is logischer
+    - deze versie haalt onnodige haakjes weg
+    - deze versie is compatibeler met unaire operatoren én robuuster
     input: lijst die opgedeeld is in de verschillende bouwsteentjes van een uitdrukking, alles in strings.
     output: lijst met zelfde bouwstenen maar in een boomstructuur: (op, arg1, arg2, ...)
     
