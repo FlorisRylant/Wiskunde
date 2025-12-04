@@ -30,9 +30,9 @@ def skip_haakjes(iter, startpos, first_recursion=True): # geeft terug hoeveel po
         return startpos
 
 
-aliases = {';':',', '[':'(', ']':')', '**':'^'}
+aliases = {';':',', '[':'(', ']':')', '**':'^', '!':'??', '-':'~'} # vervangt ook de - en ! zodat dat niet in de preprocessor apart moet
 constants = {'pi':pi, 'tau':tau, 'e':e, 'inf':inf}
-special = ',()'
+special = {',', '(', ')', '~', '??'}
 functions = {'sin':sin, 'cos':cos, 'tan':tan, 'cot':cot, 'log':log, 'ln':ln, '!':faculteit, 'floor':floor, 'ceil':ceil, 'round':round}
 operators = {'+':(1, True), '-':(1.1, True), '*':(2, True), '/':(2.1, True), '^':(3, False)} # tuple: (precedence, left-to-right)
 
