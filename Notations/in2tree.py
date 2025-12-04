@@ -25,10 +25,10 @@ def in2tree(infix):
     """
     infix = ['('] + infix + [')'] # bufferzone om randgevallen handig op te vangen
 
-    for func in functions: # zet alle functies binnen haakjes
-        while func in infix:
-            positie = infix.index(func)
-            infix = infix[:positie] + ['(', f'{func}$', ','] + infix[positie+2:]
+    for op in functions: # zet alle functies binnen haakjes
+        while op in infix:
+            positie = infix.index(op)
+            infix = infix[:positie] + ['(', f'{op}$', ','] + infix[positie+2:]
 
     for op in sorted(operators, key=lambda k: operators[k][0], reverse=True): # gaat over de operatoren van belangrijker naar minder (inverse iets belangrijker omdat die niet commutatief is)
         while op in infix: # blijft gaan zolang die operator erinzit -> zeker zorgen dat elke operator weggewerkt is!
