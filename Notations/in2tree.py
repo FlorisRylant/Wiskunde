@@ -59,8 +59,9 @@ def in2tree(infix):
 def main():
     #expression = input('Geef een uitdrukking (geen functies): ')
     expression = ['sin', '(', '5', '*', 'pi', ')']
-    expression = [e for e in expression]
+    #expression = [e for e in expression]
     print(''.join(in2tree(expression)))
+    print(in2tree(expression))
 
 if __name__ == '__main__':
     main()

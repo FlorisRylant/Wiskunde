@@ -1,1 +1,1 @@
-print(ord('┐'))
+print('a' not in 'abc')
