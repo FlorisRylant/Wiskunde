@@ -2,6 +2,18 @@ try: from basis import *
 except: from Notations.basis import *
 
 def tree2in(tree):
+    """
+    Basisalgoritme: makkelijk:
+    - alle functies buiten hun haakjes zetten
+    - alle operatoren tussen hun argumenten zetten
+
+    Rare logica: ingewikkeld:
+    De haakjes rond een operator mogen weg als...
+    - er geen operator links staat of deze commutatief is en hetzelfde als de huidige operator
+    en...
+    - er geen operator links staat (werkt van links naar rechts dus er kan nog geen gelijke rechts staan)
+    -> problemen met links-associativiteit van machten? idk
+    """
     tree = ['('] + tree + [')'] # bufferzone
 
     for op in functions: # zet alle functies buiten haakjes
