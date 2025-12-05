@@ -38,16 +38,13 @@ def maak_functie(start):
     return functie_recursie(start)
 
 def print_functie(f):
-    print(''.join(convert(f.treerepr(), 'infix')))
+    print(''.join(convert(f.treerepr(), 'infix', 'tree')))
 
 
 def main():
-    f = maak_functie('sin(pi*x)*2')
-    g = maak_functie('e^x')
-    print_functie(f)
-    print(f"f(4) = {f(4)}")
-    f.grafiek()
-    g.grafiek(x_lims=(-2,5),y_lims=[0,10])
+    h = maak_functie('min(max(5, x), sin(-4^2))')
+    print_functie(h)
+    print(''.join(h.treerepr()))
 
 if __name__ == '__main__':
     main()

@@ -4,8 +4,8 @@ except: from Notations.basis import *
 def tree2in(tree):
     """
     Basisalgoritme: makkelijk:
-    - alle functies buiten hun haakjes zetten
     - alle operatoren tussen hun argumenten zetten
+    - alle functies buiten hun haakjes zetten
 
     Rare logica: ingewikkeld:
     De haakjes rond een operator mogen weg als...
@@ -15,11 +15,6 @@ def tree2in(tree):
     -> problemen met links-associativiteit van machten? idk
     """
     tree = ['('] + tree + [')'] # bufferzone
-
-    for op in functions: # zet alle functies buiten haakjes
-        while op in tree:
-            positie = tree.index(op)
-            tree = tree[:positie-1] + [op+'$', '('] + tree[positie+2:] # vervangt "(op," door "op("
 
     for op in sorted(operators, key=lambda k: operators[k][0], reverse=True): # gaat over de operatoren van belangrijker naar minder (helpt met haakjeslogica)
         while op in tree:
@@ -32,12 +27,17 @@ def tree2in(tree):
                 del tree[skip_haakjes(tree, positie)] # haalt het sluithaakje weg
                 del tree[positie] 
     
+    for op in functions: # zet alle functies buiten haakjes
+        while op in tree:
+            positie = tree.index(op)
+            tree = tree[:positie-1] + [op+'$', '('] + tree[positie+2:] # vervangt "(op," door "op("
+
     tree = [i.replace('$', '') for i in tree[1:-1]] # alle dollartekens weghalen en de open- en sluithaakjes
     return tree
 
 
 def main():
-    expression = ['(', 'sin', ',', '(', '*', ',', '5', ',', '(','-', ',', '2', ',', 'pi', ')', ')', ')']
+    expression = ['(', '*', ',', '(', 'sin', ',', '(', '*', ',', 'pi', ',', 'x', ')', ')', ',', '2', ')']
     print(tree2in(expression))
 
 if __name__ == '__main__':

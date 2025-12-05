@@ -37,12 +37,8 @@ def preprocess(expression):
     while '~' in expression:
         positie = len(expression)-1-expression[::-1].index('~')
         expression[positie] = '-' # zet om naar gewone min
-        if expression[positie-1] in {'(', ','}.union(operators): # kijkt of het een unaire - is
-            expression = expression[:positie] + ['(', '0'] + expression[positie:] # voegt de "(0" al toe
-            positie += 3
-            while expression[positie] not in ',)+-~': # kijkt of de min nog tot hier reikt
-                positie = skip_haakjes(expression, positie) +1
-            expression.insert(positie, ')') # voegt het sluithaakje toe
+        if expression[positie+1] != ',' and expression[positie-1] in {'(', ','}.union(operators): # kijkt of het een unaire - is en geen boomstructuur
+            expression = expression[:positie] + ['-1', '*'] + expression[positie+1:]
             
     while '??' in expression: # blok om faculteit te regelen
         positie = expression.index('??')
@@ -88,8 +84,11 @@ def convert(expression, naar='tree', gegeven='default', processed=False):
     
 
 def main():
-    expr = 'min((sin(4), 10**0.1))'
-    print(''.join(convert(expr, 'postfix')))
+    expr = 'min(max(5, x), sin(-4^2))'
+    tr = convert(expr)
+    infi = convert(tr, 'infix', 'tree', True)
+    print(''.join(tr))
+    print(''.join(infi))
 
 if __name__ == '__main__':
     main()
