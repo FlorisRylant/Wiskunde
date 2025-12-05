@@ -116,10 +116,10 @@ class Functie:
         return out
     
     def treerepr(self): # omzetten naar interpreteerbare treecode
-        out = self.__op + '('
+        out = '(' + self.__op
         for a in self.__args:
-            out += a.treerepr() + ','
-        return out[:-1] + ')'
+            out += ','+ a.treerepr()
+        return out + ')'
     
     def simplified(self): # dit gaat een totaal stort worden op vlak van pointers
         arg = []

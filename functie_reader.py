@@ -1,5 +1,5 @@
-from IOmaths.interpreter import convert, functions, operators
-from IOmaths.infix_to_tree import skip_haakjes
+from Notations.basis import *
+from Notations.main import convert
 from functie_objects import Functie, Constante, Onbekende
 
 def functie_recursie(tree):
@@ -13,20 +13,20 @@ def functie_recursie(tree):
         if tree[0].isnumeric():
             return Constante(tree[0])
         return Onbekende(tree[0])
-    if tree[0] in functions or tree[0] in operators:
+    if tree[1] in functions or tree[1] in operators:
+        tree = tree[1:-1] # haalt het begin- en eindhaakje eraf
         args = []
         i = 2
-        j = 2
+        start = 2
         while i < len(tree):
-            if tree[i] == '(':
-                i = skip_haakjes(tree, i)
-            elif tree[i] == ',':
-                args.append(tree[j:i])
-                j = i+1
-                i += 1
-            i += 1
-        args.append(tree[j:-1])
-        args = tuple([functie_recursie(a) for a in args])
+            if tree[i] == ',':
+                args.append(functie_recursie(tree[start:i]))
+                i += 1 # gaat naar vlak achter de komma
+                start = i
+            i = skip_haakjes(tree, i)+1
+        args.append(functie_recursie(tree[start:]))
+
+        args = tuple(args)
         return Functie(tree[0], *args) # de asterisk voor args "unpackt" de tuple
     raise KeyError(f'Kan {tree[0]} niet in een functie steken')
 

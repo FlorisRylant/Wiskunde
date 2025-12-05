@@ -64,6 +64,7 @@ def preprocess(expression):
 
 
 def convert(expression, naar='tree', gegeven='default', processed=False):
+    """Leidt het gegevenstype af en zet om naar het juiste type via boomstructuur"""
     naar, gegeven = naar.lower(), gegeven.lower()
     if not processed: expression = preprocess(expression) # wordt genegeerd als het al gedaan is om té veel nutteloos werk te vermijden
     if gegeven != 'default': # blok als het gegeven type geweten is
@@ -85,8 +86,6 @@ def convert(expression, naar='tree', gegeven='default', processed=False):
         return convert(expression, naar, 'tree', True)
     return convert(expression, naar, 'infix', True)
     
-
-
 
 def main():
     expr = 'min((sin(4), 10**0.1))'
